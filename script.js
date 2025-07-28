@@ -18,11 +18,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function createImageSlider(images) {
+    // Dynamically compute base path to /images/ folder
+    const basePath = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '/') + 'images/';
+
     const slider = document.createElement("div");
     slider.className = "image-slider";
 
     const img = document.createElement("img");
-    img.src = images[0];
+    img.src = basePath + images[0];  // e.g., "l1/1.jpg"
     img.alt = "Property image";
     slider.appendChild(img);
 
@@ -33,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     prevButton.innerHTML = "&#10094;";
     prevButton.addEventListener("click", () => {
       currentIndex = (currentIndex - 1 + images.length) % images.length;
-      img.src = images[currentIndex];
+      img.src = basePath + images[currentIndex];
     });
 
     const nextButton = document.createElement("button");
@@ -41,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     nextButton.innerHTML = "&#10095;";
     nextButton.addEventListener("click", () => {
       currentIndex = (currentIndex + 1) % images.length;
-      img.src = images[currentIndex];
+      img.src = basePath + images[currentIndex];
     });
 
     slider.appendChild(prevButton);
