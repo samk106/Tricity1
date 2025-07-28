@@ -17,41 +17,41 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function createImageSlider(images) {
-    // Dynamically compute base path to /images/ folder
-    const basePath = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '/') + 'images/';
+function createImageSlider(images) {
+  const basePath = `${window.location.origin}${window.location.pathname.replace(/\/[^\/]*$/, '/')}`;
 
-    const slider = document.createElement("div");
-    slider.className = "image-slider";
+  const slider = document.createElement("div");
+  slider.className = "image-slider";
 
-    const img = document.createElement("img");
-    img.src = basePath + images[0];  // e.g., "l1/1.jpg"
-    img.alt = "Property image";
-    slider.appendChild(img);
+  const img = document.createElement("img");
+  img.src = basePath + 'images/' + images[0];
+  img.alt = "Property image";
+  slider.appendChild(img);
 
-    let currentIndex = 0;
+  let currentIndex = 0;
 
-    const prevButton = document.createElement("button");
-    prevButton.className = "slider-btn prev";
-    prevButton.innerHTML = "&#10094;";
-    prevButton.addEventListener("click", () => {
-      currentIndex = (currentIndex - 1 + images.length) % images.length;
-      img.src = basePath + images[currentIndex];
-    });
+  const prevButton = document.createElement("button");
+  prevButton.className = "slider-btn prev";
+  prevButton.innerHTML = "&#10094;";
+  prevButton.addEventListener("click", () => {
+    currentIndex = (currentIndex - 1 + images.length) % images.length;
+    img.src = basePath + 'images/' + images[currentIndex];
+  });
 
-    const nextButton = document.createElement("button");
-    nextButton.className = "slider-btn next";
-    nextButton.innerHTML = "&#10095;";
-    nextButton.addEventListener("click", () => {
-      currentIndex = (currentIndex + 1) % images.length;
-      img.src = basePath + images[currentIndex];
-    });
+  const nextButton = document.createElement("button");
+  nextButton.className = "slider-btn next";
+  nextButton.innerHTML = "&#10095;";
+  nextButton.addEventListener("click", () => {
+    currentIndex = (currentIndex + 1) % images.length;
+    img.src = basePath + 'images/' + images[currentIndex];
+  });
 
-    slider.appendChild(prevButton);
-    slider.appendChild(nextButton);
+  slider.appendChild(prevButton);
+  slider.appendChild(nextButton);
 
-    return slider;
-  }
+  return slider;
+}
+
 
   function displayProperties(props) {
     listingsGrid.innerHTML = "";
