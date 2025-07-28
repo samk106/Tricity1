@@ -28,6 +28,7 @@ h2 {
   margin-bottom: 24px;
   color: #111827;
 }
+
 /* Layout */
 .container {
   max-width: 1200px;
@@ -39,6 +40,7 @@ header {
   border-bottom: 1px solid #e5e7eb;
   margin-bottom: 32px;
 }
+
 /* Search & Filter */
 .filters {
   display: flex;
@@ -96,12 +98,14 @@ select:focus {
   border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
 }
-/* Listings grid */
+
+/* Listings Grid */
 .listings-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill,minmax(300px,1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 32px;
 }
+
 /* Card */
 .property-card {
   background: #ffffff;
@@ -112,14 +116,14 @@ select:focus {
   overflow: hidden;
   transition: box-shadow 0.3s ease;
 }
-.property-card:hover, .property-card:focus-within {
+.property-card:hover,
+.property-card:focus-within {
   box-shadow: 0 12px 24px rgba(0,0,0,0.12);
 }
 .property-image {
   width: 100%;
   aspect-ratio: 4 / 3;
   overflow: hidden;
-  flex-shrink: 0;
   border-bottom: 1px solid #e5e7eb;
 }
 .property-image img {
@@ -130,9 +134,9 @@ select:focus {
 }
 .property-details {
   padding: 16px 20px;
-  flex-grow: 1;
   display: flex;
   flex-direction: column;
+  flex-grow: 1;
 }
 .property-title {
   font-weight: 700;
@@ -175,10 +179,12 @@ select:focus {
   text-align: center;
   transition: background-color 0.3s ease;
 }
-.btn-details:hover, .btn-details:focus {
+.btn-details:hover,
+.btn-details:focus {
   background: #1d4ed8;
   outline: none;
 }
+
 /* Responsive */
 @media(max-width: 480px) {
   .filters {
