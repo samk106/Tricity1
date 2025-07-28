@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Cozy Apartment in Sector 45",
+    "location": "Chandigarh",
+    "type": "Flat",
+    "price": 150000,
+    "images": ["/images/l1/1.jpg", "/images/l1/2.jpg", "/images/l1/3.jpg"]
+  },
+  {
+    "name": "Spacious House in Panchkula",
+    "location": "Panchkula",
+    "type": "House",
+    "price": 300000,
+    "images": ["/images/l2/1.jpg", "/images/l2/2.jpg", "/images/l2/3.jpg"]
+  },
+  {
+    "name": "Studio Apartment in Mohali",
+    "location": "Mohali",
+    "type": "Studio",
+    "price": 100000,
+    "images": ["/images/l3/1.jpg", "/images/l3/2.jpg", "/images/l3/3.jpg"]
+  }
+]
