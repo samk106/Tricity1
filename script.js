@@ -27,14 +27,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     props.forEach((property) => {
       const card = document.createElement("div");
-      card.className = "listing-card";
+      card.className = "property-card";
       card.innerHTML = `
-        <img src="${property.image}" alt="${property.name}" />
-        <div class="listing-details">
-          <h3>${property.name}</h3>
-          <p><strong>Location:</strong> ${property.location}</p>
-          <p><strong>Type:</strong> ${property.type}</p>
-          <p><strong>Price:</strong> ₹${property.price.toLocaleString()}</p>
+        <div class="property-image">
+          <img src="${property.image}" alt="${property.name}" />
+        </div>
+        <div class="property-details">
+          <h2 class="property-title">${property.name}</h2>
+          <p class="property-location">${property.location}</p>
+          <div class="property-meta">
+            <span><span class="material-icons">home</span>${property.type}</span>
+            <span><span class="material-icons">payments</span>₹${property.price.toLocaleString()}</span>
+          </div>
+          <button class="btn-details">View Details</button>
         </div>
       `;
       listingsGrid.appendChild(card);
