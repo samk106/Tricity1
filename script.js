@@ -17,6 +17,39 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function createImageSlider(images) {
+    const slider = document.createElement("div");
+    slider.className = "image-slider";
+
+    const img = document.createElement("img");
+    img.src = images[0];
+    img.alt = "Property image";
+    slider.appendChild(img);
+
+    let currentIndex = 0;
+
+    const prevButton = document.createElement("button");
+    prevButton.className = "slider-btn prev";
+    prevButton.innerHTML = "&#10094;";
+    prevButton.addEventListener("click", () => {
+      currentIndex = (currentIndex - 1 + images.length) % images.length;
+      img.src = images[currentIndex];
+    });
+
+    const nextButton = document.createElement("button");
+    nextButton.className = "slider-btn next";
+    nextButton.innerHTML = "&#10095;";
+    nextButton.addEventListener("click", () => {
+      currentIndex = (currentIndex + 1) % images.length;
+      img.src = images[currentIndex];
+    });
+
+    slider.appendChild(prevButton);
+    slider.appendChild(nextButton);
+
+    return slider;
+  }
+
   function displayProperties(props) {
     listingsGrid.innerHTML = "";
 
@@ -28,20 +61,23 @@ document.addEventListener('DOMContentLoaded', () => {
     props.forEach((property) => {
       const card = document.createElement("div");
       card.className = "property-card";
-      card.innerHTML = `
-        <div class="property-image">
-          <img src="${property.image}" alt="${property.name}" />
+
+      const imageSlider = createImageSlider(property.images);
+
+      const details = document.createElement("div");
+      details.className = "property-details";
+      details.innerHTML = `
+        <h2 class="property-title">${property.name}</h2>
+        <p class="property-location">${property.location}</p>
+        <div class="property-meta">
+          <span><span class="material-icons">home</span>${property.type}</span>
+          <span><span class="material-icons">payments</span>₹${property.price.toLocaleString()}</span>
         </div>
-        <div class="property-details">
-          <h2 class="property-title">${property.name}</h2>
-          <p class="property-location">${property.location}</p>
-          <div class="property-meta">
-            <span><span class="material-icons">home</span>${property.type}</span>
-            <span><span class="material-icons">payments</span>₹${property.price.toLocaleString()}</span>
-          </div>
-          <button class="btn-details">View Details</button>
-        </div>
+        <button class="btn-details">View Details</button>
       `;
+
+      card.appendChild(imageSlider);
+      card.appendChild(details);
       listingsGrid.appendChild(card);
     });
   }
@@ -65,7 +101,6 @@ document.addEventListener('DOMContentLoaded', () => {
     displayProperties(filtered);
   }
 
-  // Load data from listings.json
   fetch('listings.json')
     .then((response) => {
       if (!response.ok) {
@@ -78,7 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
       populateLocationFilter();
       displayProperties(properties);
 
-      // Enable filters after loading
       searchInput.addEventListener("input", filterProperties);
       locationFilter.addEventListener("change", filterProperties);
       typeFilter.addEventListener("change", filterProperties);
