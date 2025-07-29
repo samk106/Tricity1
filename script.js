@@ -17,41 +17,40 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-function createImageSlider(images) {
-  const basePath = `${window.location.origin}${window.location.pathname.replace(/\/[^\/]*$/, '/')}`;
+  function createImageSlider(images) {
+    const basePath = `${window.location.origin}${window.location.pathname.replace(/\/[^\/]*$/, '/')}`;
 
-  const slider = document.createElement("div");
-  slider.className = "image-slider";
+    const slider = document.createElement("div");
+    slider.className = "image-slider";
 
-  const img = document.createElement("img");
-  img.src = basePath + 'images/' + images[0];
-  img.alt = "Property image";
-  slider.appendChild(img);
+    const img = document.createElement("img");
+    img.src = basePath + 'images/' + images[0];
+    img.alt = "Property image";
+    slider.appendChild(img);
 
-  let currentIndex = 0;
+    let currentIndex = 0;
 
-  const prevButton = document.createElement("button");
-  prevButton.className = "slider-btn prev";
-  prevButton.innerHTML = "&#10094;";
-  prevButton.addEventListener("click", () => {
-    currentIndex = (currentIndex - 1 + images.length) % images.length;
-    img.src = basePath + 'images/' + images[currentIndex];
-  });
+    const prevButton = document.createElement("button");
+    prevButton.className = "slider-btn prev";
+    prevButton.innerHTML = "&#10094;";
+    prevButton.addEventListener("click", () => {
+      currentIndex = (currentIndex - 1 + images.length) % images.length;
+      img.src = basePath + 'images/' + images[currentIndex];
+    });
 
-  const nextButton = document.createElement("button");
-  nextButton.className = "slider-btn next";
-  nextButton.innerHTML = "&#10095;";
-  nextButton.addEventListener("click", () => {
-    currentIndex = (currentIndex + 1) % images.length;
-    img.src = basePath + 'images/' + images[currentIndex];
-  });
+    const nextButton = document.createElement("button");
+    nextButton.className = "slider-btn next";
+    nextButton.innerHTML = "&#10095;";
+    nextButton.addEventListener("click", () => {
+      currentIndex = (currentIndex + 1) % images.length;
+      img.src = basePath + 'images/' + images[currentIndex];
+    });
 
-  slider.appendChild(prevButton);
-  slider.appendChild(nextButton);
+    slider.appendChild(prevButton);
+    slider.appendChild(nextButton);
 
-  return slider;
-}
-
+    return slider;
+  }
 
   function displayProperties(props) {
     listingsGrid.innerHTML = "";
@@ -70,11 +69,16 @@ function createImageSlider(images) {
       const details = document.createElement("div");
       details.className = "property-details";
       details.innerHTML = `
-        <h2 class="property-title">${property.name}</h2>
+        <h2 class="property-title">${property.size} <i class="fa-solid fa-bath"></i> ${property.bathrooms}</h2>
+        <p class="project-name">${property.project}</p>
         <p class="property-location">${property.location}</p>
+        <div class="area-info">
+          <span><i class="fa-solid fa-ruler-combined"></i> Carpet: ${property.carpet}</span>
+          <span><i class="fa-solid fa-ruler"></i> Super: ${property.superBuilt}</span>
+        </div>
         <div class="property-meta">
-          <span><span class="material-icons">home</span>${property.type}</span>
-          <span><span class="material-icons">payments</span>₹${property.price.toLocaleString()}</span>
+          <span><i class="fa-solid fa-building"></i> ${property.type}</span>
+          <span><i class="fa-solid fa-indian-rupee-sign"></i> ₹${property.price.toLocaleString()}</span>
         </div>
         <button class="btn-details">View Details</button>
       `;
