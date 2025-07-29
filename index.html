@@ -1,37 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Property Listings</title>
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
 </head>
 <body>
-  <div class="container">
-    <h1>Find Your Dream Property</h1>
-
-    <div class="filters">
-      <input type="text" id="search-field" placeholder="Search by name or location...">
-      <select id="filter-location">
-        <option value="">All Locations</option>
-      </select>
-      <select id="filter-type">
-        <option value="">All Types</option>
-        <option value="Flat">Flat</option>
-        <option value="House">House</option>
-        <option value="Studio">Studio</option>
-      </select>
-      <select id="filter-price">
-        <option value="">Max Price</option>
-        <option value="100000">1,00,000</option>
-        <option value="200000">2,00,000</option>
-        <option value="300000">3,00,000</option>
-      </select>
+  <header>
+    <div class="container">
+      <h1>Tricity Property Listings</h1>
+      <div class="filters">
+        <div class="search-input">
+          <input type="search" id="search-field" placeholder="Search by name or location...">
+          <span class="material-icons">search</span>
+        </div>
+        <div class="filter-group">
+          <label for="filter-location">Location</label>
+          <select id="filter-location">
+            <option value="">All</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filter-type">Type</label>
+          <select id="filter-type">
+            <option value="">All</option>
+            <option value="Flat">Flat</option>
+            <option value="House">House</option>
+            <option value="Studio">Studio</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filter-price">Max Price</label>
+          <select id="filter-price">
+            <option value="">No Limit</option>
+            <option value="100000">1,00,000</option>
+            <option value="200000">2,00,000</option>
+            <option value="300000">3,00,000</option>
+            <option value="500000">5,00,000</option>
+          </select>
+        </div>
+      </div>
     </div>
+  </header>
 
-    <div id="listings-grid" class="listings-grid"></div>
-  </div>
+  <main>
+    <div class="container">
+      <div id="listings-grid" class="listings-grid"></div>
+    </div>
+  </main>
 
   <script src="script.js"></script>
 </body>

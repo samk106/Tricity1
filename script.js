@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     slider.className = "image-slider";
 
     const img = document.createElement("img");
-    img.src = basePath + 'images/' + images[0];
+    img.src = basePath + 'images' + images[0];
     img.alt = "Property image";
     slider.appendChild(img);
 
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     prevButton.innerHTML = "&#10094;";
     prevButton.addEventListener("click", () => {
       currentIndex = (currentIndex - 1 + images.length) % images.length;
-      img.src = basePath + 'images/' + images[currentIndex];
+      img.src = basePath + 'images' + images[currentIndex];
     });
 
     const nextButton = document.createElement("button");
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     nextButton.innerHTML = "&#10095;";
     nextButton.addEventListener("click", () => {
       currentIndex = (currentIndex + 1) % images.length;
-      img.src = basePath + 'images/' + images[currentIndex];
+      img.src = basePath + 'images' + images[currentIndex];
     });
 
     slider.appendChild(prevButton);
@@ -69,16 +69,19 @@ document.addEventListener('DOMContentLoaded', () => {
       const details = document.createElement("div");
       details.className = "property-details";
       details.innerHTML = `
-        <h2 class="property-title">${property.size} <i class="fa-solid fa-bath"></i> ${property.bathrooms}</h2>
+        <h2 class="property-title">${property.title}</h2>
         <p class="project-name">${property.project}</p>
-        <p class="property-location">${property.location}</p>
-        <div class="area-info">
-          <span><i class="fa-solid fa-ruler-combined"></i> Carpet: ${property.carpet}</span>
-          <span><i class="fa-solid fa-ruler"></i> Super: ${property.superBuilt}</span>
+        <p class="property-location"><i class="fas fa-map-marker-alt"></i> ${property.location}</p>
+        <div class="property-meta">
+          <span><i class="fas fa-bed"></i> ${property.size} / ${property.bathrooms} Bath</span>
+          <span><i class="fas fa-house-user"></i> ${property.type}</span>
         </div>
         <div class="property-meta">
-          <span><i class="fa-solid fa-building"></i> ${property.type}</span>
-          <span><i class="fa-solid fa-indian-rupee-sign"></i> ₹${property.price.toLocaleString()}</span>
+          <span><i class="fas fa-ruler-combined"></i> Carpet: ${property.carpet}</span>
+          <span><i class="fas fa-ruler-combined"></i> Super: ${property.superarea}</span>
+        </div>
+        <div class="property-meta">
+          <span><i class="fas fa-indian-rupee-sign"></i> ${property.price}</span>
         </div>
         <button class="btn-details">View Details</button>
       `;
@@ -97,11 +100,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const filtered = properties.filter((prop) => {
       const matchesQuery =
-        prop.name.toLowerCase().includes(query) ||
+        prop.title.toLowerCase().includes(query) ||
         prop.location.toLowerCase().includes(query);
       const matchesLocation = !location || prop.location === location;
       const matchesType = !type || prop.type === type;
-      const matchesPrice = !maxPrice || prop.price <= maxPrice;
+      const matchesPrice = !maxPrice || parseInt(prop.price.replace(/,/g, '')) <= maxPrice;
       return matchesQuery && matchesLocation && matchesType && matchesPrice;
     });
 

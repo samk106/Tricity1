@@ -1,38 +1,38 @@
 [
   {
-    "name": "2BHK Flat",
+    "title": "2BHK Flat",
     "size": "2BHK",
     "bathrooms": 2,
     "type": "Flat",
     "project": "Bestech Twin Towers",
     "location": "Sector 66, Mohali",
-    "carpetArea": "1000 sqft",
-    "superBuiltArea": "1500 sqft",
-    "price": 3200000,
-    "images": ["l1/1.jpg", "l1/2.jpg", "l1/3.jpg"]
+    "carpet": "1000 sqft",
+    "superarea": "1500 sqft",
+    "price": "32,00,000",
+    "images": ["/l1/1.jpg", "/l1/2.jpg", "/l1/3.jpg"]
   },
   {
-    "name": "3BHK House",
+    "title": "3BHK Independent House",
     "size": "3BHK",
     "bathrooms": 3,
     "type": "House",
-    "project": "Greenwood Villas",
-    "location": "Sector 21, Panchkula",
-    "carpetArea": "1800 sqft",
-    "superBuiltArea": "2400 sqft",
-    "price": 5500000,
-    "images": ["l2/1.jpg", "l2/2.jpg", "l2/3.jpg"]
+    "project": "Shivalik City",
+    "location": "Sector 125, Mohali",
+    "carpet": "1400 sqft",
+    "superarea": "1800 sqft",
+    "price": "58,00,000",
+    "images": ["/l2/1.jpg", "/l2/2.jpg", "/l2/3.jpg"]
   },
   {
-    "name": "Studio Apartment",
-    "size": "Studio",
+    "title": "Studio Apartment",
+    "size": "1RK",
     "bathrooms": 1,
     "type": "Studio",
-    "project": "Urban Nest",
-    "location": "Sector 70, Mohali",
-    "carpetArea": "500 sqft",
-    "superBuiltArea": "700 sqft",
-    "price": 1500000,
-    "images": ["l3/1.jpg", "l3/2.jpg", "l3/3.jpg"]
+    "project": "Sunny Heights",
+    "location": "Sector 91, Mohali",
+    "carpet": "500 sqft",
+    "superarea": "700 sqft",
+    "price": "22,00,000",
+    "images": ["/l3/1.jpg", "/l3/2.jpg", "/l3/3.jpg"]
   }
 ]
