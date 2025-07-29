@@ -268,7 +268,7 @@ select:focus {
   font-size: 18px;
 }
 .slider-btn.prev { left: 10px; }
-slider-btn.next { right: 10px; }
+.slider-btn.next { right: 10px; }
 
 /* Typography for card elements */
 .property-details .title {
