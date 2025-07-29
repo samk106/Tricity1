@@ -69,21 +69,25 @@ document.addEventListener('DOMContentLoaded', () => {
       const details = document.createElement("div");
       details.className = "property-details";
       details.innerHTML = `
-        <h2 class="property-title">${property.title}</h2>
-        <p class="project-name">${property.project}</p>
-        <p class="property-location"><i class="fas fa-map-marker-alt"></i> ${property.location}</p>
-        <div class="property-meta">
-          <span><i class="fas fa-bed"></i> ${property.size} / ${property.bathrooms} Bath</span>
-          <span><i class="fas fa-house-user"></i> ${property.type}</span>
+        <div class="title">${property.title}</div>
+        <div class="location">
+          <span class="material-symbols-outlined">location_on</span>
+          ${property.project}, ${property.location}
         </div>
-        <div class="property-meta">
-          <span><i class="fas fa-ruler-combined"></i> Carpet: ${property.carpet}</span>
-          <span><i class="fas fa-ruler-combined"></i> Super: ${property.superarea}</span>
+        <div class="price">
+          <span class="material-symbols-outlined">currency_rupee</span>
+          ${property.price}
         </div>
-        <div class="property-meta">
-          <span><i class="fas fa-indian-rupee-sign"></i> ${property.price}</span>
+        <div class="details">
+          <div class="detail-item"><span class="material-symbols-outlined">straighten</span> Carpet: ${property.carpet}</div>
+          <div class="detail-item"><span class="material-symbols-outlined">square_foot</span> Super: ${property.superarea}</div>
+          <div class="detail-item"><span class="material-symbols-outlined">apartment</span> ${property.type}</div>
+          <div class="detail-item"><span class="material-symbols-outlined">bed</span> ${property.size}</div>
+          <div class="detail-item"><span class="material-symbols-outlined">bathtub</span> ${property.bathrooms} Baths</div>
         </div>
-        <button class="btn-details">View Details</button>
+        <div class="tags">
+          ${(property.tags || []).map(tag => `<div class="tag">${tag}</div>`).join('')}
+        </div>
       `;
 
       card.appendChild(imageSlider);
