@@ -192,25 +192,26 @@
       return max;
     }
 
-    jsonFileSelect.addEventListener("change", () => {
-      const file = jsonFileSelect.value;
-      if (!file) return;
+jsonFileSelect.addEventListener("change", () => {
+  const file = jsonFileSelect.value;
+  if (!file) return;
 
-      const script = document.createElement("script");
-      script.src = `/builder/${file}`;
-      script.onload = () => {
-        if (window.loadedListings) {
-          properties = window.loadedListings;
-          propertyCounter = getMaxLNumber(properties) + 1;
-          updateJSON();
-          renderPropertyList();
-        } else {
-          alert("File did not load properly.");
-        }
-      };
-      script.onerror = () => alert("Failed to load JSON file.");
-      document.body.appendChild(script);
-    });
+  const script = document.createElement("script");
+  script.src = `builder/${file}`; // 
+  script.onload = () => {
+    if (window.loadedListings) {
+      properties = window.loadedListings;
+      propertyCounter = getMaxLNumber(properties) + 1;
+      updateJSON();
+      renderPropertyList();
+    } else {
+      alert("File did not load properly.");
+    }
+  };
+  script.onerror = () => alert("Failed to load JSON file.");
+  document.body.appendChild(script);
+});
+
 
     document.getElementById("add-property-btn").addEventListener("click", () => {
       const property = {
