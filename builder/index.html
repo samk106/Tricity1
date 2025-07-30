@@ -79,21 +79,25 @@
       padding: 10px;
       border: 1px solid #ccc;
     }
+
+    .json-selector {
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
   <div class="left">
     <h2>Add Property</h2>
 
-    <div class="form-group">
-  <label for="json-selector">Select JSON File to Load:</label>
-  <select id="json-selector">
-    <option value="listings.json">listings.json</option>
-    <option value="listings-29072025.json">listings-29072025.json</option>
-    <option value="listings-01082025.json">listings-01082025.json</option>
-    <!-- Add more versions here manually -->
-  </select>
-</div>
+    <div class="json-selector">
+      <label for="json-file">Load JSON File</label>
+      <select id="json-file">
+        <option value="">-- Select JSON File --</option>
+        <option value="listings.json">listings.json</option>
+        <option value="listings1.json">listings1.json</option>
+        <!-- Add more filenames as needed -->
+      </select>
+    </div>
 
     <div class="form-group">
       <label for="title">Title</label>
@@ -167,41 +171,45 @@
   <script>
     const jsonOutput = document.getElementById("json-output");
     const propertyList = document.getElementById("property-list");
-    const dropZone = document.getElementById("image-drop-zone");
-
+    const jsonFileSelect = document.getElementById("json-file");
     let properties = [];
     let propertyCounter = 1;
-    let droppedImages = [];
 
     function getField(id) {
       return document.getElementById(id).value.trim();
     }
 
-    dropZone.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      dropZone.style.background = "#e0f7fa";
-    });
-
-    dropZone.addEventListener("dragleave", () => {
-      dropZone.style.background = "transparent";
-    });
-
-    dropZone.addEventListener("drop", (e) => {
-      e.preventDefault();
-      dropZone.style.background = "transparent";
-      const files = Array.from(e.dataTransfer.files).filter(file =>
-        file.type.startsWith("image/")
-      );
-
-      droppedImages = files.slice(0, 10);
-      renderImagePreview();
-    });
-
-    function renderImagePreview() {
-      dropZone.innerHTML = droppedImages.map((file, i) =>
-        `<div style="margin-top: 10px;">${i + 1}. ${file.name}</div>`
-      ).join("") + "<div style='margin-top:10px; color: #777;'>Images will be auto-linked as /lX/1.jpg, /lX/2.jpg etc.</div>";
+    function getMaxLNumber(data) {
+      let max = 0;
+      data.forEach(p => {
+        if (Array.isArray(p.images) && p.images.length > 0) {
+          const match = p.images[0].match(/\/l(\d+)\//);
+          if (match) {
+            const num = parseInt(match[1], 10);
+            if (num > max) max = num;
+          }
+        }
+      });
+      return max;
     }
+
+    jsonFileSelect.addEventListener("change", () => {
+      const file = jsonFileSelect.value;
+      if (!file) return;
+
+      fetch(`/builder/${file}`)
+        .then(res => res.json())
+        .then(data => {
+          properties = data;
+          propertyCounter = getMaxLNumber(data) + 1;
+          updateJSON();
+          renderPropertyList();
+        })
+        .catch(err => {
+          alert("Failed to load JSON file.");
+          console.error(err);
+        });
+    });
 
     document.getElementById("add-property-btn").addEventListener("click", () => {
       const property = {
@@ -215,13 +223,11 @@
         superarea: getField("superarea"),
         price: getField("price"),
         tags: getField("tags").split(",").map(tag => tag.trim()).filter(tag => tag.length > 0),
-        images: droppedImages.map((_, i) => `/l${propertyCounter}/${i + 1}.jpg`)
+        images: [`/l${propertyCounter}/1.jpg`, `/l${propertyCounter}/2.jpg`, `/l${propertyCounter}/3.jpg`]
       };
 
       properties.push(property);
       propertyCounter++;
-      droppedImages = [];
-      dropZone.innerHTML = "Drag & drop images here (Not functional yet)";
       updateJSON();
       renderPropertyList();
       clearForm();
