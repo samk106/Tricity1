@@ -1,4 +1,4 @@
-export default [
+window.loadedListings =  [
   {
     "title": "2BHK Flat",
     "size": "2BHK",
