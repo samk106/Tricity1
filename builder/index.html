@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Builder V1 - Property JSON Creator</title>
+  <title>Builder V2 - Property JSON Creator</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -44,7 +44,7 @@
       font-weight: bold;
     }
 
-    input, select, textarea {
+    input, select {
       width: 100%;
       padding: 6px;
       font-size: 14px;
@@ -58,7 +58,7 @@
       margin-top: 10px;
     }
 
-    #add-property-btn, #export-btn {
+    #add-property-btn {
       margin-top: 10px;
       padding: 10px;
       background: #1976d2;
@@ -66,7 +66,6 @@
       border: none;
       cursor: pointer;
       font-size: 16px;
-      margin-right: 10px;
     }
 
     #property-list {
@@ -96,7 +95,6 @@
         <option value="">-- Select JSON File --</option>
         <option value="listings.js">listings.js</option>
         <option value="listings1.js">listings1.js</option>
-        <!-- Add more filenames as needed -->
       </select>
     </div>
 
@@ -160,7 +158,6 @@
     </div>
 
     <button id="add-property-btn">Add Property</button>
-    <button id="export-btn">Export JSON</button>
 
     <div id="property-list"></div>
   </div>
@@ -235,22 +232,6 @@
       updateJSON();
       renderPropertyList();
       clearForm();
-    });
-
-    document.getElementById("export-btn").addEventListener("click", () => {
-      const jsContent = `export default ${JSON.stringify(properties, null, 2)};`;
-      const blob = new Blob([jsContent], { type: "application/javascript" });
-
-      const today = new Date();
-      const formattedDate = today.toISOString().split("T")[0].replace(/-/g, "");
-      const filename = `listings-${formattedDate}.js`;
-
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
     });
 
     function updateJSON() {
