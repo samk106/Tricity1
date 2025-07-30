@@ -93,8 +93,8 @@
       <label for="json-file">Load JSON File</label>
       <select id="json-file">
         <option value="">-- Select JSON File --</option>
-        <option value="listings.json">listings.json</option>
-        <option value="listings1.json">listings1.json</option>
+        <option value="listings.js">listings.js</option>
+        <option value="listings1.js">listings1.js</option>
         <!-- Add more filenames as needed -->
       </select>
     </div>
@@ -197,18 +197,20 @@
       const file = jsonFileSelect.value;
       if (!file) return;
 
-      fetch(`/builder/${file}`)
-        .then(res => res.json())
-        .then(data => {
-          properties = data;
-          propertyCounter = getMaxLNumber(data) + 1;
+      const script = document.createElement("script");
+      script.src = `/builder/${file}`;
+      script.onload = () => {
+        if (window.loadedListings) {
+          properties = window.loadedListings;
+          propertyCounter = getMaxLNumber(properties) + 1;
           updateJSON();
           renderPropertyList();
-        })
-        .catch(err => {
-          alert("Failed to load JSON file.");
-          console.error(err);
-        });
+        } else {
+          alert("File did not load properly.");
+        }
+      };
+      script.onerror = () => alert("Failed to load JSON file.");
+      document.body.appendChild(script);
     });
 
     document.getElementById("add-property-btn").addEventListener("click", () => {
