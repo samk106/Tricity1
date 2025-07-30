@@ -58,7 +58,7 @@
       margin-top: 10px;
     }
 
-    #add-property-btn {
+    #add-property-btn, #export-btn {
       margin-top: 10px;
       padding: 10px;
       background: #1976d2;
@@ -66,6 +66,7 @@
       border: none;
       cursor: pointer;
       font-size: 16px;
+      margin-right: 10px;
     }
 
     #property-list {
@@ -159,6 +160,7 @@
     </div>
 
     <button id="add-property-btn">Add Property</button>
+    <button id="export-btn">Export JSON</button>
 
     <div id="property-list"></div>
   </div>
@@ -168,101 +170,113 @@
     <div id="json-output">[]</div>
   </div>
 
- <script type="module">
-  const jsonOutput = document.getElementById("json-output");
-  const propertyList = document.getElementById("property-list");
-  const jsonFileSelect = document.getElementById("json-file");
-  let properties = [];
-  let propertyCounter = 1;
+  <script>
+    const jsonOutput = document.getElementById("json-output");
+    const propertyList = document.getElementById("property-list");
+    const jsonFileSelect = document.getElementById("json-file");
+    let properties = [];
+    let propertyCounter = 1;
 
-  function getField(id) {
-    return document.getElementById(id).value.trim();
-  }
+    function getField(id) {
+      return document.getElementById(id).value.trim();
+    }
 
-  function getMaxLNumber(data) {
-    let max = 0;
-    data.forEach(p => {
-      if (Array.isArray(p.images) && p.images.length > 0) {
-        const match = p.images[0].match(/\/l(\d+)\//);
-        if (match) {
-          const num = parseInt(match[1], 10);
-          if (num > max) max = num;
+    function getMaxLNumber(data) {
+      let max = 0;
+      data.forEach(p => {
+        if (Array.isArray(p.images) && p.images.length > 0) {
+          const match = p.images[0].match(/\/l(\d+)\//);
+          if (match) {
+            const num = parseInt(match[1], 10);
+            if (num > max) max = num;
+          }
         }
-      }
+      });
+      return max;
+    }
+
+    jsonFileSelect.addEventListener("change", () => {
+      const file = jsonFileSelect.value;
+      if (!file) return;
+
+      const script = document.createElement("script");
+      script.src = `/builder/${file}`;
+      script.onload = () => {
+        if (window.loadedListings) {
+          properties = window.loadedListings;
+          propertyCounter = getMaxLNumber(properties) + 1;
+          updateJSON();
+          renderPropertyList();
+        } else {
+          alert("File did not load properly.");
+        }
+      };
+      script.onerror = () => alert("Failed to load JSON file.");
+      document.body.appendChild(script);
     });
-    return max;
-  }
 
-  jsonFileSelect.addEventListener("change", async () => {
-    const file = jsonFileSelect.value;
-    if (!file) return;
+    document.getElementById("add-property-btn").addEventListener("click", () => {
+      const property = {
+        title: getField("title"),
+        location: getField("location"),
+        project: getField("project"),
+        type: getField("type"),
+        size: getField("size"),
+        bathrooms: parseInt(getField("bathrooms"), 10),
+        carpet: getField("carpet"),
+        superarea: getField("superarea"),
+        price: getField("price"),
+        tags: getField("tags").split(",").map(tag => tag.trim()).filter(tag => tag.length > 0),
+        images: [`/l${propertyCounter}/1.jpg`, `/l${propertyCounter}/2.jpg`, `/l${propertyCounter}/3.jpg`]
+      };
 
-    try {
-      const module = await import(`./${file}?v=${Date.now()}`);
-      if (module && module.default) {
-        properties = module.default;
-      } else if (window.loadedListings) {
-        properties = window.loadedListings;
-      } else {
-        alert("Could not load listings.");
-        return;
-      }
-      propertyCounter = getMaxLNumber(properties) + 1;
+      properties.push(property);
+      propertyCounter++;
       updateJSON();
       renderPropertyList();
-    } catch (err) {
-      alert("Failed to load JSON file.");
-      console.error(err);
-    }
-  });
-
-  document.getElementById("add-property-btn").addEventListener("click", () => {
-    const property = {
-      title: getField("title"),
-      location: getField("location"),
-      project: getField("project"),
-      type: getField("type"),
-      size: getField("size"),
-      bathrooms: parseInt(getField("bathrooms"), 10),
-      carpet: getField("carpet"),
-      superarea: getField("superarea"),
-      price: getField("price"),
-      tags: getField("tags").split(",").map(tag => tag.trim()).filter(tag => tag.length > 0),
-      images: [`/l${propertyCounter}/1.jpg`, `/l${propertyCounter}/2.jpg`, `/l${propertyCounter}/3.jpg`]
-    };
-
-    properties.push(property);
-    propertyCounter++;
-    updateJSON();
-    renderPropertyList();
-    clearForm();
-  });
-
-  function updateJSON() {
-    jsonOutput.textContent = JSON.stringify(properties, null, 2);
-  }
-
-  function renderPropertyList() {
-    propertyList.innerHTML = properties.map((p, i) => `
-      <div>
-        ${i + 1}. ${p.title} (${p.location})
-        <button onclick="deleteProperty(${i})">Delete</button>
-      </div>
-    `).join("");
-  }
-
-  window.deleteProperty = function(index) {
-    properties.splice(index, 1);
-    updateJSON();
-    renderPropertyList();
-  }
-
-  function clearForm() {
-    ["title", "location", "project", "type", "size", "bathrooms", "carpet", "superarea", "price", "tags"].forEach(id => {
-      document.getElementById(id).value = "";
+      clearForm();
     });
-  }
-</script>
 
+    document.getElementById("export-btn").addEventListener("click", () => {
+      const jsContent = `export default ${JSON.stringify(properties, null, 2)};`;
+      const blob = new Blob([jsContent], { type: "application/javascript" });
+
+      const today = new Date();
+      const formattedDate = today.toISOString().split("T")[0].replace(/-/g, "");
+      const filename = `listings-${formattedDate}.js`;
+
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+
+    function updateJSON() {
+      jsonOutput.textContent = JSON.stringify(properties, null, 2);
+    }
+
+    function renderPropertyList() {
+      propertyList.innerHTML = properties.map((p, i) => `
+        <div>
+          ${i + 1}. ${p.title} (${p.location})
+          <button onclick="deleteProperty(${i})">Delete</button>
+        </div>
+      `).join("");
+    }
+
+    function deleteProperty(index) {
+      properties.splice(index, 1);
+      updateJSON();
+      renderPropertyList();
+    }
+
+    function clearForm() {
+      ["title", "location", "project", "type", "size", "bathrooms", "carpet", "superarea", "price", "tags"].forEach(id => {
+        document.getElementById(id).value = "";
+      });
+    }
+  </script>
 </body>
 </html>
