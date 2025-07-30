@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Builder V1 - Property JSON Creator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      height: 100vh;
+    }
+
+    .left, .right {
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .left {
+      width: 50%;
+      border-right: 1px solid #ccc;
+      overflow-y: auto;
+    }
+
+    .right {
+      width: 50%;
+      background: #f9f9f9;
+      overflow-y: auto;
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    .form-group {
+      margin-bottom: 10px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 4px;
+      font-weight: bold;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 6px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    #image-drop-zone {
+      border: 2px dashed #aaa;
+      padding: 20px;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    #add-property-btn {
+      margin-top: 10px;
+      padding: 10px;
+      background: #1976d2;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    #property-list {
+      margin-top: 20px;
+    }
+
+    #json-output {
+      white-space: pre-wrap;
+      font-family: monospace;
+      background: #fff;
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div class="left">
+    <h2>Add Property</h2>
+
+    <div class="form-group">
+      <label for="title">Title</label>
+      <input type="text" id="title" />
+    </div>
+
+    <div class="form-group">
+      <label for="location">Location</label>
+      <input type="text" id="location" />
+    </div>
+
+    <div class="form-group">
+      <label for="project">Project</label>
+      <input type="text" id="project" />
+    </div>
+
+    <div class="form-group">
+      <label for="type">Type</label>
+      <select id="type">
+        <option value="Flat">Flat</option>
+        <option value="House">House</option>
+        <option value="Studio">Studio</option>
+        <option value="Plot">Plot</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="size">Size (e.g., 2BHK)</label>
+      <input type="text" id="size" />
+    </div>
+
+    <div class="form-group">
+      <label for="bathrooms">Bathrooms</label>
+      <input type="number" id="bathrooms" />
+    </div>
+
+    <div class="form-group">
+      <label for="carpet">Carpet Area</label>
+      <input type="text" id="carpet" />
+    </div>
+
+    <div class="form-group">
+      <label for="superarea">Super Area</label>
+      <input type="text" id="superarea" />
+    </div>
+
+    <div class="form-group">
+      <label for="price">Price</label>
+      <input type="text" id="price" />
+    </div>
+
+    <div class="form-group">
+      <label for="tags">Tags (comma separated)</label>
+      <input type="text" id="tags" />
+    </div>
+
+    <div id="image-drop-zone">
+      Drag & drop images here (Not functional yet)
+    </div>
+
+    <button id="add-property-btn">Add Property</button>
+
+    <div id="property-list"></div>
+  </div>
+
+  <div class="right">
+    <h2>Generated JSON</h2>
+    <div id="json-output">[]</div>
+  </div>
+
+  <script>
+    const jsonOutput = document.getElementById("json-output");
+    const propertyList = document.getElementById("property-list");
+    const dropZone = document.getElementById("image-drop-zone");
+
+    let properties = [];
+    let propertyCounter = 1;
+    let droppedImages = [];
+
+    function getField(id) {
+      return document.getElementById(id).value.trim();
+    }
+
+    dropZone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropZone.style.background = "#e0f7fa";
+    });
+
+    dropZone.addEventListener("dragleave", () => {
+      dropZone.style.background = "transparent";
+    });
+
+    dropZone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropZone.style.background = "transparent";
+      const files = Array.from(e.dataTransfer.files).filter(file =>
+        file.type.startsWith("image/")
+      );
+
+      droppedImages = files.slice(0, 10);
+      renderImagePreview();
+    });
+
+    function renderImagePreview() {
+      dropZone.innerHTML = droppedImages.map((file, i) =>
+        `<div style="margin-top: 10px;">${i + 1}. ${file.name}</div>`
+      ).join("") + "<div style='margin-top:10px; color: #777;'>Images will be auto-linked as /lX/1.jpg, /lX/2.jpg etc.</div>";
+    }
+
+    document.getElementById("add-property-btn").addEventListener("click", () => {
+      const property = {
+        title: getField("title"),
+        location: getField("location"),
+        project: getField("project"),
+        type: getField("type"),
+        size: getField("size"),
+        bathrooms: parseInt(getField("bathrooms"), 10),
+        carpet: getField("carpet"),
+        superarea: getField("superarea"),
+        price: getField("price"),
+        tags: getField("tags").split(",").map(tag => tag.trim()).filter(tag => tag.length > 0),
+        images: droppedImages.map((_, i) => `/l${propertyCounter}/${i + 1}.jpg`)
+      };
+
+      properties.push(property);
+      propertyCounter++;
+      droppedImages = [];
+      dropZone.innerHTML = "Drag & drop images here (Not functional yet)";
+      updateJSON();
+      renderPropertyList();
+      clearForm();
+    });
+
+    function updateJSON() {
+      jsonOutput.textContent = JSON.stringify(properties, null, 2);
+    }
+
+    function renderPropertyList() {
+      propertyList.innerHTML = properties.map((p, i) => `
+        <div>
+          ${i + 1}. ${p.title} (${p.location})
+          <button onclick="deleteProperty(${i})">Delete</button>
+        </div>
+      `).join("");
+    }
+
+    function deleteProperty(index) {
+      properties.splice(index, 1);
+      updateJSON();
+      renderPropertyList();
+    }
+
+    function clearForm() {
+      ["title", "location", "project", "type", "size", "bathrooms", "carpet", "superarea", "price", "tags"].forEach(id => {
+        document.getElementById(id).value = "";
+      });
+    }
+  </script>
+</body>
+</html>
