@@ -197,7 +197,7 @@ jsonFileSelect.addEventListener("change", () => {
   if (!file) return;
 
   const script = document.createElement("script");
-  script.src = `builder/${file}`; // 
+script.src = `./${file}`;
   script.onload = () => {
     if (window.loadedListings) {
       properties = window.loadedListings;
