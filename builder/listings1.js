@@ -1,4 +1,4 @@
-window.loadedListings =  [
+window.loadedListings = [
   {
     "title": "2BHK Flat",
     "size": "2BHK",
@@ -35,7 +35,7 @@ window.loadedListings =  [
     "price": "22,00,000",
     "images": ["/l3/1.jpg", "/l3/2.jpg", "/l3/3.jpg"]
   },
-    {
+  {
     "title": "2BHK Flat",
     "size": "2BHK",
     "bathrooms": 2,
@@ -47,4 +47,4 @@ window.loadedListings =  [
     "price": "32,00,000",
     "images": ["/l1/1.jpg", "/l1/2.jpg", "/l1/3.jpg"]
   }
-]
+];
