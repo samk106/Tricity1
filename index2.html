@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Property Listings</title>
+    <!-- Google Fonts and Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+    <style>
+        /* --- Base & Reset --- */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+            color: #374151;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        /* --- Layout --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px 64px;
+        }
+
+        header {
+            text-align: center;
+            padding-bottom: 32px;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 32px;
+        }
+
+        h1 {
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+            color: #111827;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            color: #6b7280;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* --- Search, Filter, & Sort Section --- */
+        .controls-container {
+            display: flex;
+            flex-direction: column; /* Stack rows vertically */
+            gap: 20px;
+            margin-bottom: 40px;
+            padding: 24px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        
+        .top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .bottom-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .search-input {
+            flex: 1 1 400px; /* Allow it to grow */
+            position: relative;
+        }
+
+        .search-input input[type="search"] {
+            width: 100%;
+            padding: 12px 40px 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .search-input input[type="search"]:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        .search-input .material-icons {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            pointer-events: none;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .top-row .filter-group {
+            flex: 0 1 220px; /* Prevent sort from growing too much */
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            color: #4b5563;
+        }
+
+        select {
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            padding: 11px 12px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            background-color: white;
+            width: 100%;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        /* --- Listings Grid --- */
+        .listings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 32px;
+        }
+
+        .listings-grid p {
+            font-size: 1.1rem;
+            color: #4b5563;
+        }
+
+        /* --- Property Card --- */
+        .property-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .property-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+        }
+
+        /* --- Card Image Slider --- */
+        .image-slider {
+            position: relative;
+            height: 220px;
+            overflow: hidden;
+            background-color: #e5e7eb;
+        }
+
+        .image-slider img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.3);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+            z-index: 2;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease, background-color 0.3s ease;
+        }
+        
+        .property-card:hover .slider-btn {
+            opacity: 1;
+        }
+
+        .slider-btn:hover {
+            background: rgba(0,0,0,0.6);
+        }
+
+        .slider-btn.prev { left: 10px; }
+        .slider-btn.next { right: 10px; }
+
+        /* --- Card Content --- */
+        .property-details {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .property-details .property-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: #111827;
+        }
+        
+        .property-date {
+            font-size: 0.85rem;
+            color: #9ca3af;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .property-details .location {
+            font-size: 0.95rem;
+            color: #6b7280;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .property-details .price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1d4ed8;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+            color: #374151;
+        }
+
+        .detail-item {
+            background-color: #f3f4f6;
+            padding: 8px 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: auto; /* Pushes tags to the bottom */
+            padding-top: 16px;
+        }
+
+        .tag {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 5px 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 20px;
+        }
+
+        .material-symbols-outlined {
+            font-size: 20px;
+            vertical-align: middle;
+        }
+        
+        .property-date .material-symbols-outlined { font-size: 16px; }
+        .location .material-symbols-outlined { color: #ef4444; }
+        .price .material-symbols-outlined { color: #1d4ed8; }
+        .detail-item .material-symbols-outlined { color: #6b7280; }
+
+    </style>
+</head>
+<body>
+    <header class="container" role="banner">
+        <h1>Find Your Next Home</h1>
+        <p>Explore available flats, houses, and studios. Use the search and filters below to find a property that's perfect for you.</p>
+    </header>
+
+    <main class="container" role="main">
+        <section aria-label="Property Search and Filter" class="controls-container" role="search">
+            <!-- Top row for primary search and sort -->
+            <div class="top-row">
+                <div class="search-input">
+                     <label for="search-field" class="sr-only">Search properties by name or location</label>
+                    <input id="search-field" type="search" placeholder="Search by name, project, or location..." aria-label="Search properties" />
+                    <span class="material-icons" aria-hidden="true">search</span>
+                </div>
+                <div class="filter-group">
+                    <label for="sort-by">Sort By</label>
+                    <select id="sort-by" aria-label="Sort properties">
+                        <option value="date-desc">Date: Newest</option>
+                        <option value="date-asc">Date: Oldest</option>
+                        <option value="price-asc">Price: Low to High</option>
+                        <option value="price-desc">Price: High to Low</option>
+                        <option value="carpet-asc">Carpet Area: Low to High</option>
+                        <option value="carpet-desc">Carpet Area: High to Low</option>
+                        <option value="super-asc">Super Area: Low to High</option>
+                        <option value="super-desc">Super Area: High to Low</option>
+                    </select>
+                </div>
+            </div>
+            <!-- Bottom row for secondary filters -->
+            <div class="bottom-row">
+                <div class="filter-group">
+                    <label for="filter-location">Location</label>
+                    <select id="filter-location" aria-label="Filter by location">
+                        <option value="">All Locations</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-type">Type</label>
+                    <select id="filter-type" aria-label="Filter by property type">
+                        <option value="">All Types</option>
+                        <option value="Flat">Flat</option>
+                        <option value="House">House</option>
+                        <option value="Studio">Studio</option>
+                    </select>
+                </div>
+                 <div class="filter-group">
+                    <label for="filter-bhk">BHK</label>
+                    <select id="filter-bhk" aria-label="Filter by BHK">
+                        <option value="">All Sizes</option>
+                        <option value="1">1 BHK</option>
+                        <option value="2">2 BHK</option>
+                        <option value="3">3 BHK</option>
+                        <option value="4">4 BHK</option>
+                        <option value="5">5+ BHK</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-price">Max Price</label>
+                    <select id="filter-price" aria-label="Filter by maximum price">
+                        <option value="">No Max</option>
+                        <option value="2500000">₹25,00,000</option>
+                        <option value="4000000">₹40,00,000</option>
+                        <option value="6000000">₹60,00,000</option>
+                        <option value="8000000">₹80,00,000</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <section aria-label="Property Listings" class="listings-grid" id="listings-grid" tabindex="0">
+            <!-- Property cards will be inserted here by JavaScript -->
+        </section>
+    </main>
+
+    <script type="module">
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM Elements
+            const searchInput = document.getElementById("search-field");
+            const locationFilter = document.getElementById("filter-location");
+            const typeFilter = document.getElementById("filter-type");
+            const priceFilter = document.getElementById("filter-price");
+            const bhkFilter = document.getElementById("filter-bhk");
+            const sortBy = document.getElementById("sort-by");
+            const listingsGrid = document.getElementById("listings-grid");
+
+            // Raw property data
+            let properties = [
+                { "title": "Modern 2BHK Flat", "size": "2BHK", "bathrooms": 2, "type": "Flat", "project": "Bestech Twin Towers", "location": "Sector 66, Mohali", "carpet": "1000 sqft", "superarea": "1500 sqft", "price": "3200000", "dateAdded": "2025-08-01", "images": ["https://placehold.co/600x400/3b82f6/ffffff?text=Living+Room", "https://placehold.co/600x400/16a34a/ffffff?text=Bedroom", "https://placehold.co/600x400/f97316/ffffff?text=Kitchen"], "tags": ["Ready to Move", "Gated Community"] },
+                { "title": "Spacious 3BHK House", "size": "3BHK", "bathrooms": 3, "type": "House", "project": "Shivalik City", "location": "Sector 125, Mohali", "carpet": "1400 sqft", "superarea": "1800 sqft", "price": "5800000", "dateAdded": "2025-07-25", "images": ["https://placehold.co/600x400/d946ef/ffffff?text=Exterior", "https://placehold.co/600x400/0891b2/ffffff?text=Master+Bedroom", "https://placehold.co/600x400/65a30d/ffffff?text=Garden"], "tags": ["Corner Plot", "Newly Built"] },
+                { "title": "Cozy Studio Apartment", "size": "1RK", "bathrooms": 1, "type": "Studio", "project": "Sunny Heights", "location": "Sector 91, Mohali", "carpet": "500 sqft", "superarea": "700 sqft", "price": "2200000", "dateAdded": "2025-07-10", "images": ["https://placehold.co/600x400/be123c/ffffff?text=Main+Room", "https://placehold.co/600x400/ca8a04/ffffff?text=View", "https://placehold.co/600x400/4f46e5/ffffff?text=Bathroom"], "tags": ["Fully Furnished", "Pool View"] },
+                { "title": "Luxury 4BHK Villa", "size": "4BHK", "bathrooms": 4, "type": "House", "project": "Eco Homes", "location": "New Chandigarh", "carpet": "2500 sqft", "superarea": "3200 sqft", "price": "7500000", "dateAdded": "2025-08-07", "images": ["https://placehold.co/600x400/861a93/ffffff?text=Facade", "https://placehold.co/600x400/9a3412/ffffff?text=Living+Area", "https://placehold.co/600x400/1e40af/ffffff?text=Rooftop"], "tags": ["Smart Home", "Private Garden"] },
+                { "title": "Affordable 1BHK", "size": "1BHK", "bathrooms": 1, "type": "Flat", "project": "Budget Homes", "location": "Sector 125, Mohali", "carpet": "450 sqft", "superarea": "600 sqft", "price": "1800000", "dateAdded": "2025-08-05", "images": ["https://placehold.co/600x400/7c2d12/ffffff?text=Compact+Living"], "tags": ["Low Maintenance"] }
+            ];
+            
+            // Pre-process data to add numeric fields for sorting/filtering
+            properties.forEach(prop => {
+                prop.price = parseInt(prop.price);
+                prop.bhk = parseInt(prop.size) || 0; // "1RK" becomes 1, handles cases with no number
+                prop.carpet_sqft = parseInt(prop.carpet);
+                prop.superarea_sqft = parseInt(prop.superarea);
+            });
+
+            /**
+             * Formats a date string into a relative time string (e.g., "Posted 5 days ago").
+             * @param {string} dateString - The date in YYYY-MM-DD format.
+             * @returns {string} A human-readable relative time string.
+             */
+            function formatRelativeDate(dateString) {
+                const now = new Date('2025-08-08T10:00:00'); // Fixed "now" for consistent example output
+                const past = new Date(dateString);
+                const diffInSeconds = Math.floor((now - past) / 1000);
+
+                const days = Math.floor(diffInSeconds / 86400);
+                if (days < 1) return "Posted today";
+                if (days === 1) return "Posted yesterday";
+                if (days < 7) return `Posted ${days} days ago`;
+
+                const weeks = Math.floor(days / 7);
+                return `Posted ${weeks} week${weeks > 1 ? 's' : ''} ago`;
+            }
+
+            function populateLocationFilter() {
+                const uniqueLocations = [...new Set(properties.map(p => p.location))];
+                uniqueLocations.sort();
+                uniqueLocations.forEach(loc => {
+                    const option = document.createElement("option");
+                    option.value = loc;
+                    option.textContent = loc;
+                    locationFilter.appendChild(option);
+                });
+            }
+
+            function createImageSlider(images, title) {
+                const slider = document.createElement("div");
+                slider.className = "image-slider";
+                const img = document.createElement("img");
+                img.src = images[0];
+                img.alt = `Image of ${title}`;
+                slider.appendChild(img);
+
+                if (images.length > 1) {
+                    let currentIndex = 0;
+                    const prevButton = document.createElement("button");
+                    prevButton.className = "slider-btn prev";
+                    prevButton.innerHTML = "&#10094;";
+                    prevButton.setAttribute('aria-label', 'Previous Image');
+                    prevButton.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        currentIndex = (currentIndex - 1 + images.length) % images.length;
+                        img.src = images[currentIndex];
+                    });
+                    const nextButton = document.createElement("button");
+                    nextButton.className = "slider-btn next";
+                    nextButton.innerHTML = "&#10095;";
+                    nextButton.setAttribute('aria-label', 'Next Image');
+                    nextButton.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        currentIndex = (currentIndex + 1) % images.length;
+                        img.src = images[currentIndex];
+                    });
+                    slider.appendChild(prevButton);
+                    slider.appendChild(nextButton);
+                }
+                return slider;
+            }
+
+            function displayProperties(props) {
+                listingsGrid.innerHTML = "";
+                if (props.length === 0) {
+                    listingsGrid.innerHTML = "<p>No properties match the selected criteria. Please try adjusting your filters.</p>";
+                    return;
+                }
+                props.forEach((property) => {
+                    const card = document.createElement("div");
+                    card.className = "property-card";
+                    card.tabIndex = 0;
+                    const imageSlider = createImageSlider(property.images, property.title);
+                    const formattedPrice = new Intl.NumberFormat('en-IN').format(property.price);
+                    const relativeDate = formatRelativeDate(property.dateAdded);
+                    const details = document.createElement("div");
+                    details.className = "property-details";
+                    details.innerHTML = `
+                        <div class="property-title">${property.title}</div>
+                        <div class="property-date">
+                            <span class="material-symbols-outlined" aria-hidden="true">calendar_today</span>
+                            ${relativeDate}
+                        </div>
+                        <div class="location">
+                            <span class="material-symbols-outlined" aria-hidden="true">location_on</span>
+                            ${property.project}, ${property.location}
+                        </div>
+                        <div class="price">
+                            <span class="material-symbols-outlined" aria-hidden="true">currency_rupee</span>
+                            ${formattedPrice}
+                        </div>
+                        <div class="details-grid">
+                            <div class="detail-item"><span class="material-symbols-outlined">straighten</span>${property.carpet}</div>
+                            <div class="detail-item"><span class="material-symbols-outlined">square_foot</span>${property.superarea}</div>
+                            <div class="detail-item"><span class="material-symbols-outlined">apartment</span>${property.type}</div>
+                            <div class="detail-item"><span class="material-symbols-outlined">bed</span>${property.size}</div>
+                            <div class="detail-item"><span class="material-symbols-outlined">bathtub</span>${property.bathrooms} Baths</div>
+                        </div>
+                        <div class="tags">
+                            ${(property.tags || []).map(tag => `<div class="tag">${tag}</div>`).join('')}
+                        </div>
+                    `;
+                    card.appendChild(imageSlider);
+                    card.appendChild(details);
+                    listingsGrid.appendChild(card);
+                });
+            }
+
+            function updateListings() {
+                // 1. Get current values from all controls
+                const query = searchInput.value.toLowerCase().trim();
+                const location = locationFilter.value;
+                const type = typeFilter.value;
+                const maxPrice = priceFilter.value ? parseInt(priceFilter.value) : null;
+                const bhk = bhkFilter.value ? parseInt(bhkFilter.value) : null;
+                const sortValue = sortBy.value;
+
+                // 2. Filter properties
+                let filtered = properties.filter((prop) => {
+                    const matchesQuery = query === '' || prop.title.toLowerCase().includes(query) || prop.location.toLowerCase().includes(query) || prop.project.toLowerCase().includes(query);
+                    const matchesLocation = !location || prop.location === location;
+                    const matchesType = !type || prop.type === type;
+                    const matchesPrice = !maxPrice || prop.price <= maxPrice;
+                    const matchesBhk = !bhk || (bhk < 5 ? prop.bhk === bhk : prop.bhk >= 5);
+                    return matchesQuery && matchesLocation && matchesType && matchesPrice && matchesBhk;
+                });
+
+                // 3. Sort the filtered results
+                switch (sortValue) {
+                    case 'price-asc': filtered.sort((a, b) => a.price - b.price); break;
+                    case 'price-desc': filtered.sort((a, b) => b.price - a.price); break;
+                    case 'date-asc': filtered.sort((a, b) => new Date(a.dateAdded) - new Date(b.dateAdded)); break;
+                    case 'date-desc': filtered.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded)); break;
+                    case 'carpet-asc': filtered.sort((a, b) => a.carpet_sqft - b.carpet_sqft); break;
+                    case 'carpet-desc': filtered.sort((a, b) => b.carpet_sqft - a.carpet_sqft); break;
+                    case 'super-asc': filtered.sort((a, b) => a.superarea_sqft - b.superarea_sqft); break;
+                    case 'super-desc': filtered.sort((a, b) => b.superarea_sqft - a.superarea_sqft); break;
+                }
+
+                // 4. Display the final list
+                displayProperties(filtered);
+            }
+
+            // Initial setup
+            populateLocationFilter();
+            updateListings();
+
+            // Event Listeners for all controls
+            [searchInput, locationFilter, typeFilter, priceFilter, bhkFilter, sortBy].forEach(el => {
+                el.addEventListener("input", updateListings); // "input" for search, "change" is covered
+                el.addEventListener("change", updateListings);
+            });
+        });
+    </script>
+</body>
+</html>
